@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pdfplumber
+pytesseract
+foundry-local-sdk
+openai

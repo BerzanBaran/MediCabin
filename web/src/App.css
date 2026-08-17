@@ -1,0 +1,260 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__header {
+  padding: 1.25rem 1rem 0;
+}
+
+.app__header h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.75rem;
+  color: var(--primary-dark);
+}
+
+.app__tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app__tab {
+  padding: 0.6rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.app__tab--active {
+  color: var(--primary-dark);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+
+.app__content {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat screen */
+
+.chat-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.chat-screen__messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+}
+
+.chat-screen__hint {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.chat-screen__error {
+  color: var(--danger-text);
+}
+
+.chat-screen__message-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.chat-screen__response-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.chat-screen__sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.chat-screen__sources-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.source-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.chat-screen__disclaimer {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.chat-screen__input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.chat-screen__input-row input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.chat-screen__input-row button,
+.settings-screen__actions button {
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.chat-screen__input-row button:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+}
+
+/* Chat bubble */
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.chat-bubble--user {
+  align-self: flex-end;
+  background: var(--primary);
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-bubble--assistant {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 2px;
+}
+
+/* Interaction banner */
+
+.interaction-banner {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+}
+
+.interaction-banner strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.interaction-banner p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* Meds screen */
+
+.meds-screen {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.meds-screen__hint {
+  color: var(--text-muted);
+}
+
+.med-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+
+.med-card__name {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 0.25rem;
+}
+
+.med-card__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Settings screen */
+
+.settings-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 420px;
+}
+
+.settings-screen label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.settings-screen input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.settings-screen__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.settings-screen__actions button:last-child {
+  background: var(--surface);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
+
+.settings-screen__status {
+  font-size: 0.88rem;
+}
+
+.settings-screen__note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

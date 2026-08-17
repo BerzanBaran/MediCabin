@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated index (regenerate with `python -m src.ingest`)
+data/index.json
+
+# Node / web
+web/node_modules/
+web/dist/
+web/.vite/
+
+# Large installer, not part of the project source
+tesseract-ocr-w64-setup-*.exe
+
+# OS / editor
+.vs/
+*.log
+
+# Claude Code session runtime artifacts
+.claude/scheduled_tasks.lock
