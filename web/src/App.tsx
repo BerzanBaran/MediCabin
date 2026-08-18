@@ -1,42 +1,63 @@
 import { useState } from "react";
 import "./App.css";
+import LanguageToggle from "./components/LanguageToggle";
+import { LanguageProvider, useLanguage } from "./lib/i18n";
 import ChatScreen from "./screens/ChatScreen";
+import GuideScreen from "./screens/GuideScreen";
+import HomeScreen from "./screens/HomeScreen";
 import MedsScreen from "./screens/MedsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 
-type Tab = "chat" | "meds" | "settings";
+type Tab = "home" | "chat" | "meds" | "settings" | "guide";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "chat", label: "Sohbet" },
-  { id: "meds", label: "İlaç Dolabım" },
-  { id: "settings", label: "Ayarlar" },
-];
+function AppShell() {
+  const [tab, setTab] = useState<Tab>("home");
+  const { t } = useLanguage();
 
-export default function App() {
-  const [tab, setTab] = useState<Tab>("chat");
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "home", label: t.tab_home },
+    { id: "chat", label: t.tab_chat },
+    { id: "meds", label: t.tab_meds },
+    { id: "settings", label: t.tab_settings },
+  ];
+
+  const fullBleed = tab === "home" || tab === "guide";
 
   return (
-    <div className="app">
+    <div className={`app ${tab === "guide" ? "app--wide" : ""}`}>
       <header className="app__header">
-        <h1>İlaç Dolabı Asistanı</h1>
+        <div className="app__header-row">
+          <h1>{t.appName}</h1>
+          <LanguageToggle />
+        </div>
         <nav className="app__tabs">
-          {TABS.map((t) => (
+          {TABS.map((tb) => (
             <button
-              key={t.id}
-              className={`app__tab ${tab === t.id ? "app__tab--active" : ""}`}
-              onClick={() => setTab(t.id)}
+              key={tb.id}
+              className={`app__tab ${tab === tb.id ? "app__tab--active" : ""}`}
+              onClick={() => setTab(tb.id)}
             >
-              {t.label}
+              {tb.label}
             </button>
           ))}
         </nav>
       </header>
 
-      <main className="app__content">
+      <main className={`app__content ${fullBleed ? "app__content--home" : ""}`}>
+        {tab === "home" && <HomeScreen onNavigate={setTab} />}
         {tab === "chat" && <ChatScreen />}
         {tab === "meds" && <MedsScreen />}
         {tab === "settings" && <SettingsScreen />}
+        {tab === "guide" && <GuideScreen />}
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppShell />
+    </LanguageProvider>
   );
 }

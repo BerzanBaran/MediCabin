@@ -22,6 +22,27 @@ export interface ChatResponse {
   disclaimer: string;
 }
 
+export type RiskLevel = "low" | "medium" | "high";
+
+export interface DrugPair {
+  drug_a: string;
+  drug_b: string;
+}
+
+export interface DuplicateGroup {
+  active_ingredient: string;
+  drugs: string[];
+}
+
+export interface SafetyScan {
+  total_drugs: number;
+  interaction_count: number;
+  duplicate_count: number;
+  risk_level: RiskLevel;
+  interacting_pairs: DrugPair[];
+  duplicate_groups: DuplicateGroup[];
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${getServerUrl()}${path}`, {
     headers: { "Content-Type": "application/json" },
@@ -47,4 +68,8 @@ export function postChat(question: string, topK?: number): Promise<ChatResponse>
 
 export function checkHealth(): Promise<{ status: string; index_loaded: boolean }> {
   return request("/health");
+}
+
+export function getSafetyScan(): Promise<SafetyScan> {
+  return request<SafetyScan>("/meds/safety-scan");
 }

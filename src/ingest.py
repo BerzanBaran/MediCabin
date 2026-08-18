@@ -7,7 +7,8 @@ import json
 from datetime import datetime, timezone
 
 from . import config
-from .chunking import chunk_document
+from .chunking import chunk_document, derive_drug_name
+from .drug_info import extract_active_ingredient
 from .embeddings import get_embedder
 
 
@@ -21,11 +22,20 @@ def main() -> None:
         return
 
     all_chunks = []
+    drugs = []
     for pdf_path in pdf_paths:
         chunks = chunk_document(pdf_path)
         mode = "bölüm-tabanlı" if chunks and chunks[0].section_title != "İçerik" else "kayan-pencere"
-        print(f"  {pdf_path.name}: {len(chunks)} parça ({mode})")
+        active_ingredient = extract_active_ingredient(pdf_path)
+        print(f"  {pdf_path.name}: {len(chunks)} parça ({mode}), etkin madde: {active_ingredient or '?'}")
         all_chunks.extend(chunks)
+        drugs.append(
+            {
+                "drug_name": derive_drug_name(pdf_path),
+                "source_file": pdf_path.name,
+                "active_ingredient": active_ingredient,
+            }
+        )
 
     print(f"Toplam {len(all_chunks)} parça, {len(pdf_paths)} ilaç.")
 
@@ -38,6 +48,7 @@ def main() -> None:
     index = {
         "created_at": datetime.now(timezone.utc).isoformat(),
         "embedding_backend": embedder.backend_name,
+        "drugs": drugs,
         "chunks": [
             {
                 "id": chunk.id,

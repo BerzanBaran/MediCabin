@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { checkHealth } from "../lib/api";
+import { useLanguage } from "../lib/i18n";
 import { DEFAULT_SERVER_URL, getServerUrl, setServerUrl } from "../lib/storage";
 
 export default function SettingsScreen() {
+  const { t } = useLanguage();
   const [url, setUrl] = useState(getServerUrl());
   const [status, setStatus] = useState<string | null>(null);
 
@@ -12,18 +14,18 @@ export default function SettingsScreen() {
   }
 
   async function handleTest() {
-    setStatus("Bağlantı test ediliyor…");
+    setStatus(t.settings_testing);
     try {
       const health = await checkHealth();
-      setStatus(health.index_loaded ? "✓ Bağlantı başarılı, ilaç dolabı hazır." : "✓ Sunucuya ulaşıldı ama index henüz yüklenmedi.");
+      setStatus(health.index_loaded ? t.settings_ok : t.settings_ok_no_index);
     } catch (err) {
-      setStatus(`✗ Bağlantı hatası: ${err instanceof Error ? err.message : "bilinmeyen hata"}`);
+      setStatus(t.settings_error(err instanceof Error ? err.message : t.unknown_error));
     }
   }
 
   return (
     <div className="settings-screen">
-      <label htmlFor="server-url">Sunucu Adresi</label>
+      <label htmlFor="server-url">{t.settings_server_label}</label>
       <input
         id="server-url"
         type="text"
@@ -32,14 +34,11 @@ export default function SettingsScreen() {
         placeholder={DEFAULT_SERVER_URL}
       />
       <div className="settings-screen__actions">
-        <button onClick={handleSave}>Kaydet</button>
-        <button onClick={handleTest}>Bağlantıyı Test Et</button>
+        <button onClick={handleSave}>{t.settings_save}</button>
+        <button onClick={handleTest}>{t.settings_test}</button>
       </div>
       {status && <p className="settings-screen__status">{status}</p>}
-      <p className="settings-screen__note">
-        Backend ve web arayüzü aynı bilgisayarda çalıştığı için genelde varsayılan adres
-        ({DEFAULT_SERVER_URL}) yeterlidir.
-      </p>
+      <p className="settings-screen__note">{t.settings_note(DEFAULT_SERVER_URL)}</p>
     </div>
   );
 }

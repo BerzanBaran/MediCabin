@@ -69,3 +69,9 @@ def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail="question boş olamaz.")
     top_k = req.top_k or config.TOP_K
     return rag.answer(state, req.question, top_k=top_k)
+
+
+@app.get("/meds/safety-scan")
+def safety_scan():
+    state = _require_state()
+    return rag.safety_scan(state)

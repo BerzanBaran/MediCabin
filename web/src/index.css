@@ -1,16 +1,34 @@
 :root {
   color-scheme: light;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --bg: #f4f7f6;
+
+  /* Health-themed palette: clinical blue + sage green, red reserved for warnings only */
+  --bg: #eaf5f2;
+  --home-gradient: linear-gradient(135deg, #dcf0f9 0%, #e2f7ec 100%);
   --surface: #ffffff;
-  --border: #dbe4e1;
-  --text: #1f2d2a;
-  --text-muted: #5c6b67;
-  --primary: #2f7d6e;
-  --primary-dark: #235e53;
+  --surface-alt: #f2faf8;
+  --border: #d7e6e2;
+  --text: #14262a;
+  --text-muted: #57706e;
+
+  --primary: #1f6fa5;
+  --primary-dark: #164f79;
+  --primary-light: #e4f1fa;
+
+  --accent: #2fa98c;
+  --accent-light: #e1f6ee;
+
   --danger-bg: #fdecea;
   --danger-border: #e57373;
   --danger-text: #7a1f1f;
+
+  --warning-bg: #fef3e2;
+  --warning-border: #eab364;
+  --warning-text: #7a4a1f;
+
+  --safe-bg: #e1f6ee;
+  --safe-border: #6ec6a4;
+  --safe-text: #1f6b4c;
 }
 
 * {

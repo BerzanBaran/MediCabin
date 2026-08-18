@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
+from itertools import combinations
 
 from . import config, embeddings, foundry_client, matching
 
@@ -14,6 +16,7 @@ class IndexState:
     chunk_vectors: list
     embedder: embeddings.Embedder
     drug_registry: dict[str, str]
+    drugs: list[dict]
 
 
 def load_index() -> IndexState:
@@ -37,9 +40,14 @@ def load_index() -> IndexState:
 
     drug_names = sorted({c["drug_name"] for c in chunks})
     drug_registry = matching.build_drug_registry(drug_names)
+    drugs: list[dict] = data.get("drugs", [{"drug_name": n, "active_ingredient": None} for n in drug_names])
 
     return IndexState(
-        chunks=chunks, chunk_vectors=chunk_vectors, embedder=embedder, drug_registry=drug_registry
+        chunks=chunks,
+        chunk_vectors=chunk_vectors,
+        embedder=embedder,
+        drug_registry=drug_registry,
+        drugs=drugs,
     )
 
 
@@ -133,4 +141,69 @@ def answer(state: IndexState, question: str, top_k: int = config.TOP_K) -> dict:
         "interaction_warning": interaction_warning,
         "matched_drugs": matched_drugs,
         "disclaimer": config.DISCLAIMER,
+    }
+
+
+def _core_ingredient(ingredient: str) -> str:
+    """Drop salt-form qualifiers (sodyum, kalsiyum, tartarata, ...) — leaflet
+    caution sections almost always refer to the bare molecule name, not the
+    specific salt form used in the composition line."""
+    return matching.normalize_tr(ingredient).split(" ")[0]
+
+
+def _mentions_ingredient(state: IndexState, drug_name: str, ingredient: str) -> bool:
+    pattern = rf"\b{re.escape(_core_ingredient(ingredient))}\b"
+    for chunk in state.chunks:
+        if chunk["drug_name"] != drug_name or not _is_interaction_section(chunk["section_title"]):
+            continue
+        if re.search(pattern, matching.normalize_tr(chunk["text"])):
+            return True
+    return False
+
+
+def safety_scan(state: IndexState) -> dict:
+    """Deterministic, no-LLM pairwise safety scan across the whole cabinet:
+    for each pair of drugs, check whether either leaflet's caution section
+    mentions the other drug's active ingredient (leaflets reference generic
+    ingredient names, not brand names, so matching must go through
+    `active_ingredient` rather than `drug_name`). Also groups drugs that
+    share the same active ingredient (duplicate therapy risk)."""
+    drugs = [d for d in state.drugs if d.get("active_ingredient")]
+
+    interacting_pairs: list[dict] = []
+    for a, b in combinations(drugs, 2):
+        if _mentions_ingredient(state, a["drug_name"], b["active_ingredient"]) or _mentions_ingredient(
+            state, b["drug_name"], a["active_ingredient"]
+        ):
+            interacting_pairs.append({"drug_a": a["drug_name"], "drug_b": b["drug_name"]})
+
+    groups: dict[str, list[str]] = {}
+    for d in drugs:
+        groups.setdefault(_core_ingredient(d["active_ingredient"]), []).append(d["drug_name"])
+    duplicate_groups = [
+        {
+            "active_ingredient": next(
+                d["active_ingredient"] for d in drugs if _core_ingredient(d["active_ingredient"]) == key
+            ),
+            "drugs": names,
+        }
+        for key, names in groups.items()
+        if len(names) > 1
+    ]
+
+    interaction_count = len(interacting_pairs)
+    if interaction_count == 0:
+        risk_level = "low"
+    elif interaction_count <= 2:
+        risk_level = "medium"
+    else:
+        risk_level = "high"
+
+    return {
+        "total_drugs": len(state.drugs),
+        "interaction_count": interaction_count,
+        "duplicate_count": len(duplicate_groups),
+        "risk_level": risk_level,
+        "interacting_pairs": interacting_pairs,
+        "duplicate_groups": duplicate_groups,
     }
