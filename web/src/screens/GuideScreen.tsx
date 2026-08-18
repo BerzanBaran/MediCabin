@@ -11,6 +11,7 @@ import ChatScreen from "./ChatScreen";
 import SecurityBanner from "../components/SecurityBanner";
 import SideEffectLogView from "./SideEffectLogView";
 import NotesView from "./NotesView";
+import ProfileView from "./ProfileView";
 import SymptomCheckView from "./SymptomCheckView";
 
 export type GuideView =
@@ -27,7 +28,7 @@ export type GuideView =
   | "interactions"
   | "polypharmacy";
 
-const SOON_VIEWS: GuideView[] = ["profile", "calendar"];
+const SOON_VIEWS: GuideView[] = ["calendar"];
 
 function ComingSoon() {
   const { t } = useLanguage();
@@ -203,6 +204,8 @@ export default function GuideScreen() {
             )}
           </div>
         )}
+
+        {view === "profile" && <ProfileView />}
 
         {view === "notes" && <NotesView />}
 

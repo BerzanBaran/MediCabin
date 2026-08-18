@@ -1285,3 +1285,71 @@
   color: var(--text-muted);
   margin: 0.4rem 0 0;
 }
+
+/* Profiles */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.profile-card__name {
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.profile-card__meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.profile-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-card__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.profile-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.profile-card__note {
+  font-size: 0.82rem;
+  color: var(--text);
+  margin: 0;
+  font-style: italic;
+}
+
+.source-chip--warning {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+}

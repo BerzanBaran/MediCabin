@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getMeds, type Med } from "../lib/api";
 import { useLanguage } from "../lib/i18n";
-import { addNote, getNotes, removeNote, type NoteEntry } from "../lib/notesLog";
+import { addNote, getNotes, removeNote, seedSampleNotesIfEmpty, type NoteEntry } from "../lib/notesLog";
+import { getProfiles, seedSampleProfilesIfEmpty, type Profile } from "../lib/profiles";
 import { getStatusFor, getUsageLog, setUsageStatus, todayKey, type UsageStatus } from "../lib/usageLog";
 
 const STATUSES: UsageStatus[] = ["aldim", "atladim", "gecikti", "sorun"];
@@ -10,9 +11,11 @@ export default function NotesView() {
   const { t } = useLanguage();
   const [meds, setMeds] = useState<Med[]>([]);
   const [usageLog, setUsageLog] = useState(getUsageLog());
-  const [notes, setNotes] = useState<NoteEntry[]>(getNotes());
+  const [notes, setNotes] = useState<NoteEntry[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const [drugName, setDrugName] = useState("");
+  const [authorName, setAuthorName] = useState(t.notes_author_self);
   const [rating, setRating] = useState(4);
   const [severity, setSeverity] = useState(1);
   const [comment, setComment] = useState("");
@@ -24,6 +27,12 @@ export default function NotesView() {
         if (list.length > 0) setDrugName((prev) => prev || list[0].drug_name);
       })
       .catch(() => {});
+
+    seedSampleProfilesIfEmpty();
+    seedSampleNotesIfEmpty();
+    setProfiles(getProfiles());
+    setNotes(getNotes());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const today = todayKey();
@@ -41,7 +50,7 @@ export default function NotesView() {
 
   function handleAddNote() {
     if (!drugName || !comment.trim()) return;
-    addNote({ drugName, rating, severity, comment: comment.trim() });
+    addNote({ drugName, rating, severity, comment: comment.trim(), authorName });
     setNotes(getNotes());
     setComment("");
   }
@@ -81,6 +90,18 @@ export default function NotesView() {
       <div className="notes-card">
         <h3 className="notes-card__title">{t.notes_add_title}</h3>
         <div className="notes-form">
+          <label className="login-field">
+            {t.notes_author_label}
+            <select value={authorName} onChange={(e) => setAuthorName(e.target.value)}>
+              <option value={t.notes_author_self}>{t.notes_author_self}</option>
+              {profiles.map((p) => (
+                <option key={p.id} value={p.name}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <select value={drugName} onChange={(e) => setDrugName(e.target.value)}>
             {meds.map((med) => (
               <option key={med.source_file} value={med.drug_name}>
@@ -135,7 +156,7 @@ export default function NotesView() {
             {notes.map((n) => (
               <li key={n.id} className="pair-list__item log-entry">
                 <div>
-                  <strong>{n.drugName}</strong> · ★{n.rating} ·{" "}
+                  <strong>{n.authorName || t.notes_author_self}</strong> · {n.drugName} · ★{n.rating} ·{" "}
                   {t.notes_severity_label.split(" ")[0]} {n.severity}
                   <div className="log-entry__date">{n.comment}</div>
                   <div className="log-entry__date">{new Date(n.timestamp).toLocaleString()}</div>
