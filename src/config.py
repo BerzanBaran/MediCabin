@@ -14,6 +14,7 @@ TOP_K = 5
 
 FOUNDRY_CHAT_MODEL_ALIAS = "qwen2.5-1.5b"
 FOUNDRY_EMBEDDING_MODEL_ALIAS = "qwen3-embedding-0.6b"
+FOUNDRY_WHISPER_MODEL_ALIAS = "whisper-small"
 FOUNDRY_STARTUP_TIMEOUT_S = 30
 
 CORS_ORIGINS = ["http://localhost:5173"]
@@ -26,3 +27,9 @@ DISCLAIMER = (
 # Keywords (normalized, diacritics stripped) used to identify interaction/caution
 # sections within a leaflet's chunks, for retrieval boosting.
 INTERACTION_SECTION_KEYWORDS = ["dikkat", "kullanmadan once", "birlikte", "etkilesim"]
+
+# Keywords used to identify the "possible side effects" section of a leaflet.
+SIDE_EFFECTS_SECTION_KEYWORDS = ["yan etki"]
+
+SYMPTOM_MATCH_THRESHOLD = 0.35
+SYMPTOM_MATCH_TOP_K = 5

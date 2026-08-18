@@ -43,6 +43,21 @@ export interface SafetyScan {
   duplicate_groups: DuplicateGroup[];
 }
 
+export interface SymptomMatch {
+  drug_name: string;
+  section_title: string;
+  page_number: number;
+  snippet: string;
+  direct_match: boolean;
+  score: number;
+}
+
+export interface SymptomCheckResponse {
+  symptom: string;
+  matches: SymptomMatch[];
+  checked_drugs: string[];
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${getServerUrl()}${path}`, {
     headers: { "Content-Type": "application/json" },
@@ -72,4 +87,22 @@ export function checkHealth(): Promise<{ status: string; index_loaded: boolean }
 
 export function getSafetyScan(): Promise<SafetyScan> {
   return request<SafetyScan>("/meds/safety-scan");
+}
+
+export function postSymptomCheck(symptom: string): Promise<SymptomCheckResponse> {
+  return request<SymptomCheckResponse>("/symptom-check", {
+    method: "POST",
+    body: JSON.stringify({ symptom }),
+  });
+}
+
+export async function postTranscribe(audioBlob: Blob): Promise<{ text: string }> {
+  const formData = new FormData();
+  formData.append("audio", audioBlob, "recording.webm");
+  const res = await fetch(`${getServerUrl()}/transcribe`, { method: "POST", body: formData });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`İstek başarısız (${res.status}): ${detail}`);
+  }
+  return res.json() as Promise<{ text: string }>;
 }

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import subprocess
 import time
+from pathlib import Path
 
 import openai
 
@@ -89,3 +90,19 @@ def embed_texts(texts: list[str], model: str = config.FOUNDRY_EMBEDDING_MODEL_AL
     client = get_client()
     response = client.embeddings.create(model=model, input=texts)
     return [item.embedding for item in response.data]
+
+
+def transcribe_audio(
+    file_path: Path, model: str = config.FOUNDRY_WHISPER_MODEL_ALIAS, language: str = "tr"
+) -> str:
+    """Foundry Local's speech models aren't exposed over the OpenAI-compatible
+    REST endpoint (confirmed: /v1/audio/transcriptions 404s), only through the
+    CLI's native IPC path — so this shells out rather than using `get_client()`."""
+    result = _run_foundry(
+        ["transcribe", "-f", str(file_path), "-m", model, "-l", language, "-o", "json"],
+        timeout=60,
+    )
+    if result.returncode != 0:
+        raise FoundryUnavailableError(result.stderr.strip() or "foundry transcribe failed")
+    data = json.loads(result.stdout)
+    return (data.get("text") or "").strip()

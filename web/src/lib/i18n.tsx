@@ -113,6 +113,29 @@ const dictionaries = {
     my_meds_time_label: "Doz saatleri (virgülle ayırın, örn. 08:00, 20:00)",
     my_meds_save: "Kaydet",
     my_meds_saved: "Kaydedildi ✓",
+
+    symptom_title: "Yaşadığınız belirti, kullandığınız ilaçların yan etkisi olabilir mi?",
+    symptom_subtitle: (link: string) =>
+      `Belirtinizi yazın; ${link} listenizdeki ilaçların prospektüs yan etki bölümleriyle karşılaştırılır. Tamamen yerel çalışır.`,
+    symptom_placeholder: "örn. midem bulanıyor",
+    symptom_check_button: "Kontrol Et",
+    symptom_checking: "Kontrol ediliyor…",
+    symptom_examples: ["başım dönüyor", "midem bulanıyor", "kaşıntı ve döküntü var", "çarpıntı hissediyorum"],
+    symptom_result_prefix: (symptom: string) =>
+      `"${symptom}" belirtisi, kullandığınız şu ilaçların prospektüsündeki yan etkilerle örtüşüyor olabilir:`,
+    symptom_no_match: (symptom: string) =>
+      `"${symptom}" belirtisi, dolabınızdaki ilaçların prospektüs yan etki bölümlerinde bulunamadı.`,
+    symptom_direct_match: "doğrudan eşleşme",
+    symptom_related_match: "olası eşleşme",
+    symptom_save_to_log: "Günlüğe Kaydet",
+    symptom_saved_to_log: "Günlüğe kaydedildi ✓",
+    symptom_checked_drugs: (drugs: string) => `Kontrol edilen ilaçlar: ${drugs}.`,
+    symptom_disclaimer:
+      "Bu sonuç kesin bir teşhis değildir; yalnızca prospektüse dayalı bir bilgilendirmedir. Belirtinin nedenini ve ilacınızı değiştirip değiştirmeyeceğinizi yalnızca hekiminiz belirleyebilir.",
+
+    log_title: "Yan Etki Günlüğü",
+    log_empty: "Henüz kaydedilmiş bir yan etki kaydı yok.",
+    log_remove: "Sil",
   },
   en: {
     appName: "Medicine Cabinet Assistant",
@@ -222,6 +245,29 @@ const dictionaries = {
     my_meds_time_label: "Dose times (comma-separated, e.g. 08:00, 20:00)",
     my_meds_save: "Save",
     my_meds_saved: "Saved ✓",
+
+    symptom_title: "Could what you're feeling be a side effect of your medicines?",
+    symptom_subtitle: (link: string) =>
+      `Type your symptom; it's checked against the side-effect sections of the medicines in your ${link}. Runs entirely on-device.`,
+    symptom_placeholder: "e.g. feeling nauseous",
+    symptom_check_button: "Check",
+    symptom_checking: "Checking…",
+    symptom_examples: ["feeling dizzy", "feeling nauseous", "itching and rash", "heart palpitations"],
+    symptom_result_prefix: (symptom: string) =>
+      `"${symptom}" may overlap with the side effects listed for these of your medicines:`,
+    symptom_no_match: (symptom: string) =>
+      `"${symptom}" wasn't found in the side-effect sections of your cabinet's medicines.`,
+    symptom_direct_match: "direct match",
+    symptom_related_match: "possible match",
+    symptom_save_to_log: "Save to Log",
+    symptom_saved_to_log: "Saved to log ✓",
+    symptom_checked_drugs: (drugs: string) => `Medicines checked: ${drugs}.`,
+    symptom_disclaimer:
+      "This is not a diagnosis — only information based on the leaflet. Only your doctor can determine the cause of a symptom or whether to change your medicine.",
+
+    log_title: "Side Effect Log",
+    log_empty: "No side effect entries logged yet.",
+    log_remove: "Remove",
   },
 } as const;
 

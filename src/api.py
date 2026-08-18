@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import tempfile
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from . import config, rag
+from . import config, foundry_client, rag
 
 _state: rag.IndexState | None = None
 
@@ -31,6 +33,10 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     question: str
     top_k: int | None = None
+
+
+class SymptomCheckRequest(BaseModel):
+    symptom: str
 
 
 class MedOut(BaseModel):
@@ -75,3 +81,29 @@ def chat(req: ChatRequest):
 def safety_scan():
     state = _require_state()
     return rag.safety_scan(state)
+
+
+@app.post("/symptom-check")
+def symptom_check(req: SymptomCheckRequest):
+    state = _require_state()
+    if not req.symptom.strip():
+        raise HTTPException(status_code=400, detail="symptom boş olamaz.")
+    return rag.symptom_check(state, req.symptom)
+
+
+@app.post("/transcribe")
+async def transcribe(audio: UploadFile = File(...)):
+    suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        tmp.write(await audio.read())
+        tmp_path = Path(tmp.name)
+
+    try:
+        foundry_client.ensure_model_loaded(config.FOUNDRY_WHISPER_MODEL_ALIAS)
+        text = foundry_client.transcribe_audio(tmp_path)
+    except foundry_client.FoundryUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+    return {"text": text}

@@ -8,6 +8,8 @@ import { useLanguage } from "../lib/i18n";
 import { getSchedule, groupByTime, setDrugTimes, type ScheduleMap } from "../lib/schedule";
 import ChatScreen from "./ChatScreen";
 import SecurityBanner from "../components/SecurityBanner";
+import SideEffectLogView from "./SideEffectLogView";
+import SymptomCheckView from "./SymptomCheckView";
 
 export type GuideView =
   | "panel"
@@ -23,7 +25,7 @@ export type GuideView =
   | "interactions"
   | "polypharmacy";
 
-const SOON_VIEWS: GuideView[] = ["profile", "notes", "analysis", "symptom", "calendar", "side-effects"];
+const SOON_VIEWS: GuideView[] = ["profile", "notes", "analysis", "calendar"];
 
 function ComingSoon() {
   const { t } = useLanguage();
@@ -121,7 +123,7 @@ export default function GuideScreen() {
                   icon={<IconPulse />}
                   title={t.card_symptom_title}
                   description={t.card_symptom_desc}
-                  comingSoon
+                  onClick={() => setView("symptom")}
                 />
                 <FeatureCard
                   icon={<IconShield />}
@@ -178,6 +180,10 @@ export default function GuideScreen() {
             )}
           </div>
         )}
+
+        {view === "symptom" && <SymptomCheckView />}
+
+        {view === "side-effects" && <SideEffectLogView />}
 
         {view === "polypharmacy" && (
           <div className="guide-panel">

@@ -207,3 +207,111 @@ def safety_scan(state: IndexState) -> dict:
         "interacting_pairs": interacting_pairs,
         "duplicate_groups": duplicate_groups,
     }
+
+
+def _is_side_effects_section(section_title: str) -> bool:
+    norm = matching.normalize_tr(section_title)
+    return any(matching.normalize_tr(kw) in norm for kw in config.SIDE_EFFECTS_SECTION_KEYWORDS)
+
+
+# Best-effort lay-phrase -> leaflet-term expansion. Turkish is agglutinative
+# (bulanıyor / bulantı share a root but not a literal substring after
+# normalization), so a handful of common lay symptom words are mapped to the
+# term(s) leaflets actually use. Not exhaustive — literal word matches (below)
+# already cover most cases since many symptom words match the leaflet term
+# verbatim (kaşıntı, döküntü, çarpıntı, ...).
+_SYMPTOM_SYNONYMS: dict[str, list[str]] = {
+    "bulaniyor": ["bulanti"],
+    "bulantim": ["bulanti"],
+    "kusuyorum": ["kusma"],
+    "donuyor": ["donmesi"],
+    "basim": ["bas donmesi", "bas agrisi"],
+    "agriyor": ["agrisi"],
+    "kasiniyor": ["kasinti"],
+    "uykum": ["uyku hali", "somnolans"],
+    "yorgunum": ["halsizlik", "yorgunluk"],
+    "halsizim": ["halsizlik"],
+    "ishalim": ["ishal"],
+    "kabizim": ["kabizlik"],
+    "atesim": ["ates"],
+    "terliyorum": ["terleme"],
+}
+
+_EMBEDDING_ONLY_THRESHOLD = 0.5
+
+
+def _expand_symptom_terms(symptom: str) -> list[str]:
+    words = [w for w in matching.normalize_tr(symptom).split() if len(w) > 2]
+    terms = list(words)
+    for w in words:
+        terms.extend(_SYMPTOM_SYNONYMS.get(w, []))
+    return terms
+
+
+def symptom_check(state: IndexState, symptom: str, top_k: int = config.SYMPTOM_MATCH_TOP_K) -> dict:
+    """Restricted to each leaflet's side-effects section. Literal term matches
+    (the symptom's own words, plus a small synonym expansion for common lay
+    phrasing) are the primary, trustworthy signal — "tamamen yerel çalışır"
+    with no ambiguity about why a drug was flagged. Embedding similarity is
+    used only as a secondary fallback, and only at a high-confidence
+    threshold, for drugs with no literal match at all."""
+    side_effect_chunks = [
+        (c, v) for c, v in zip(state.chunks, state.chunk_vectors) if _is_side_effects_section(c["section_title"])
+    ]
+    if not side_effect_chunks:
+        return {"symptom": symptom, "matches": [], "checked_drugs": sorted({c["drug_name"] for c in state.chunks})}
+
+    terms = _expand_symptom_terms(symptom)
+    query_vec = state.embedder.embed_query(symptom)
+
+    best_literal: dict[str, tuple[dict, int]] = {}  # drug_name -> (chunk, term_hit_count)
+    best_semantic: dict[str, tuple[dict, float]] = {}  # drug_name -> (chunk, score)
+
+    for chunk, vec in side_effect_chunks:
+        norm_text = matching.normalize_tr(chunk["text"])
+        hit_count = sum(1 for term in terms if term in norm_text)
+        drug = chunk["drug_name"]
+
+        if hit_count > 0:
+            prev = best_literal.get(drug)
+            if prev is None or hit_count > prev[1]:
+                best_literal[drug] = (chunk, hit_count)
+
+        score = state.embedder.similarity(query_vec, vec)
+        prev_sem = best_semantic.get(drug)
+        if prev_sem is None or score > prev_sem[1]:
+            best_semantic[drug] = (chunk, score)
+
+    matches: list[dict] = []
+    for drug, (chunk, hit_count) in best_literal.items():
+        matches.append(
+            {
+                "drug_name": drug,
+                "section_title": chunk["section_title"],
+                "page_number": chunk["page_number"],
+                "snippet": (chunk["text"][:280] + "…") if len(chunk["text"]) > 280 else chunk["text"],
+                "direct_match": True,
+                "score": hit_count,
+            }
+        )
+    matches.sort(key=lambda m: m["score"], reverse=True)
+
+    for drug, (chunk, score) in best_semantic.items():
+        if drug in best_literal or score < _EMBEDDING_ONLY_THRESHOLD:
+            continue
+        matches.append(
+            {
+                "drug_name": drug,
+                "section_title": chunk["section_title"],
+                "page_number": chunk["page_number"],
+                "snippet": (chunk["text"][:280] + "…") if len(chunk["text"]) > 280 else chunk["text"],
+                "direct_match": False,
+                "score": round(score, 3),
+            }
+        )
+
+    return {
+        "symptom": symptom,
+        "matches": matches[:top_k],
+        "checked_drugs": sorted({c["drug_name"] for c in state.chunks}),
+    }
