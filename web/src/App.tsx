@@ -5,10 +5,11 @@ import { LanguageProvider, useLanguage } from "./lib/i18n";
 import ChatScreen from "./screens/ChatScreen";
 import GuideScreen from "./screens/GuideScreen";
 import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
 import MedsScreen from "./screens/MedsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 
-type Tab = "home" | "chat" | "meds" | "settings" | "guide";
+type Tab = "home" | "chat" | "meds" | "settings" | "guide" | "login";
 
 function AppShell() {
   const [tab, setTab] = useState<Tab>("home");
@@ -19,6 +20,7 @@ function AppShell() {
     { id: "chat", label: t.tab_chat },
     { id: "meds", label: t.tab_meds },
     { id: "settings", label: t.tab_settings },
+    { id: "login", label: t.tab_login },
   ];
 
   const fullBleed = tab === "home" || tab === "guide";
@@ -34,7 +36,9 @@ function AppShell() {
           {TABS.map((tb) => (
             <button
               key={tb.id}
-              className={`app__tab ${tab === tb.id ? "app__tab--active" : ""}`}
+              className={`app__tab ${tab === tb.id ? "app__tab--active" : ""} ${
+                tb.id === "login" ? "app__tab--push-right" : ""
+              }`}
               onClick={() => setTab(tb.id)}
             >
               {tb.label}
@@ -49,6 +53,7 @@ function AppShell() {
         {tab === "meds" && <MedsScreen />}
         {tab === "settings" && <SettingsScreen />}
         {tab === "guide" && <GuideScreen />}
+        {tab === "login" && <LoginScreen onLoggedIn={() => setTab("home")} />}
       </main>
     </div>
   );

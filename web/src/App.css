@@ -1230,3 +1230,58 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+/* Push the login tab to the far right of the tab row */
+.app__tab--push-right {
+  margin-left: auto;
+}
+
+/* Login / register */
+
+.login-card {
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.login-field input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.login-link {
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  align-self: flex-start;
+  text-decoration: underline;
+}
+
+.login-info {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.login-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0.4rem 0 0;
+}
