@@ -39,6 +39,19 @@ class SymptomCheckRequest(BaseModel):
     symptom: str
 
 
+class AnalysisSummaryRequest(BaseModel):
+    total_drugs: int
+    side_effect_count: int
+    usage_note_count: int
+    comment_count: int
+    avg_severity: float
+    avg_rating: float
+    taken_count: int
+    skipped_count: int
+    delayed_count: int
+    problem_count: int
+
+
 class MedOut(BaseModel):
     drug_name: str
     source_file: str
@@ -89,6 +102,12 @@ def symptom_check(req: SymptomCheckRequest):
     if not req.symptom.strip():
         raise HTTPException(status_code=400, detail="symptom boş olamaz.")
     return rag.symptom_check(state, req.symptom)
+
+
+@app.post("/analysis-summary")
+def analysis_summary(req: AnalysisSummaryRequest):
+    _require_state()
+    return {"summary": rag.analysis_summary(req.model_dump())}
 
 
 @app.post("/transcribe")

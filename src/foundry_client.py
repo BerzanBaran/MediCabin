@@ -71,7 +71,13 @@ def get_client() -> openai.OpenAI:
     return _client
 
 
-def chat_complete(system: str, user: str, model: str = config.FOUNDRY_CHAT_MODEL_ALIAS) -> str:
+def chat_complete(
+    system: str,
+    user: str,
+    model: str = config.FOUNDRY_CHAT_MODEL_ALIAS,
+    max_tokens: int = 400,
+    frequency_penalty: float = 0.4,
+) -> str:
     client = get_client()
     response = client.chat.completions.create(
         model=model,
@@ -80,8 +86,8 @@ def chat_complete(system: str, user: str, model: str = config.FOUNDRY_CHAT_MODEL
             {"role": "user", "content": user},
         ],
         temperature=0.1,
-        max_tokens=400,
-        frequency_penalty=0.4,
+        max_tokens=max_tokens,
+        frequency_penalty=frequency_penalty,
     )
     return response.choices[0].message.content or ""
 

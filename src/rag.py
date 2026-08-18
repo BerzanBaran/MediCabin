@@ -315,3 +315,41 @@ def symptom_check(state: IndexState, symptom: str, top_k: int = config.SYMPTOM_M
         "matches": matches[:top_k],
         "checked_drugs": sorted({c["drug_name"] for c in state.chunks}),
     }
+
+
+def analysis_summary(stats: dict) -> str:
+    """Turkish natural-language summary of the user's local usage/notes
+    statistics (Analiz page). Deliberately bypasses the leaflet-grounded RAG
+    prompt used by `answer()` — this isn't a leaflet Q&A, it's commentary on
+    the user's own locally-logged numbers.
+
+    qwen2.5-1.5b tends to loop/repeat itself on open-ended commentary tasks
+    without concrete grounding, so the prompt does the arithmetic itself
+    (adherence %) and gives a single worked example — small local models
+    follow a concrete pattern far more reliably than an abstract instruction.
+    """
+    total_doses = stats["taken_count"] + stats["skipped_count"] + stats["delayed_count"] + stats["problem_count"]
+    adherence_pct = round(100 * stats["taken_count"] / total_doses) if total_doses else None
+
+    system = (
+        "Sen bir ilaç kullanım analisti asistanısın. Kullanıcının kendi "
+        "cihazında tuttuğu istatistikleri TÜRKÇE, tam olarak 2-3 cümleyle "
+        "yorumla. Sadece sana verilen sayılardan bahset, sayı uydurma, "
+        "kendini tekrar etme. Kesin tıbbi yorum veya tanı koyma; bu sadece "
+        "kullanım alışkanlığı üzerine bir gözlem.\n\n"
+        "Örnek:\n"
+        "Girdi: uyum oranı %75, alınan 6, atlanan 2, kayıtlı yan etki 1\n"
+        "Çıktı: Dozlarınızın yaklaşık %75'ini zamanında aldınız, bu iyi bir "
+        "uyum oranı ancak 2 doz atlanmış. Kayıtlı 1 yan etki bulunuyor. "
+        "Atlanan dozları azaltmak için hatırlatıcı kurmayı düşünebilirsiniz."
+    )
+    user = (
+        f"Uyum oranı: {f'%{adherence_pct}' if adherence_pct is not None else 'veri yok'}\n"
+        f"Alınan doz: {stats['taken_count']}, Atlanan: {stats['skipped_count']}, "
+        f"Geciken: {stats['delayed_count']}, Sorunlu: {stats['problem_count']}\n"
+        f"İlaç planındaki ilaç sayısı: {stats['total_drugs']}\n"
+        f"Kayıtlı yan etki sayısı: {stats['side_effect_count']}\n"
+        f"Kullanım notu sayısı: {stats['usage_note_count']}, Yorum sayısı: {stats['comment_count']}\n"
+        f"Ortalama ciddiyet (1-5): {stats['avg_severity']}, Ortalama memnuniyet (1-5): {stats['avg_rating']}\n"
+    )
+    return foundry_client.chat_complete(system, user, max_tokens=200, frequency_penalty=0.6)

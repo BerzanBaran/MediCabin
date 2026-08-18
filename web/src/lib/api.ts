@@ -106,3 +106,23 @@ export async function postTranscribe(audioBlob: Blob): Promise<{ text: string }>
   }
   return res.json() as Promise<{ text: string }>;
 }
+
+export interface AnalysisStats {
+  total_drugs: number;
+  side_effect_count: number;
+  usage_note_count: number;
+  comment_count: number;
+  avg_severity: number;
+  avg_rating: number;
+  taken_count: number;
+  skipped_count: number;
+  delayed_count: number;
+  problem_count: number;
+}
+
+export function postAnalysisSummary(stats: AnalysisStats): Promise<{ summary: string }> {
+  return request("/analysis-summary", {
+    method: "POST",
+    body: JSON.stringify(stats),
+  });
+}
