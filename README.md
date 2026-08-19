@@ -25,11 +25,15 @@ Prospektüslerinizi okur, sorularınızı kaynak göstererek yanıtlar, ilaç et
 | 🌐 **TR / EN** | Arayüzün tamamı Türkçe ve İngilizce olarak kullanılabilir |
 | 🔒 **Giriş / Kayıt** | Tamamen yerel, demo amaçlı hesap sistemi — hiçbir bilgi sunucuya gönderilmez |
 
-<!-- Buraya birkaç özellik ekran görüntüsü ekleyin -->
+
+
 <p>
+<img width="1295" height="901" alt="image" src="https://github.com/user-attachments/assets/0e50aa1c-ce1c-41d6-96fb-8857b03f2d5b" />
   <img src="docs/screenshots/soru-cevap.png" width="32%" alt="Soru-Cevap" />
+  <img width="1276" height="893" alt="image" src="https://github.com/user-attachments/assets/2efa3472-1321-4396-a97a-bc993392aa40" />
   <img src="docs/screenshots/etkilesim.png" width="32%" alt="Etkileşim Uyarısı" />
-  <img src="docs/screenshots/analiz.png" width="32%" alt="Analiz" />
+<img width="1296" height="901" alt="image" src="https://github.com/user-attachments/assets/4a84ba09-3d51-4b1e-b9ce-d2647b3ac591" />
+<img src="docs/screenshots/analiz.png" width="32%" alt="Analiz" />
 </p>
 
 ---
