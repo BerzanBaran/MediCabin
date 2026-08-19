@@ -126,3 +126,19 @@ export function postAnalysisSummary(stats: AnalysisStats): Promise<{ summary: st
     body: JSON.stringify(stats),
   });
 }
+
+export interface PhotoAnalyzeResponse {
+  result: string;
+  matched_drugs: string[];
+}
+
+export async function postPhotoAnalyze(photo: File): Promise<PhotoAnalyzeResponse> {
+  const formData = new FormData();
+  formData.append("photo", photo);
+  const res = await fetch(`${getServerUrl()}/photo-analyze`, { method: "POST", body: formData });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`İstek başarısız (${res.status}): ${detail}`);
+  }
+  return res.json() as Promise<PhotoAnalyzeResponse>;
+}

@@ -5,3 +5,6 @@ pytesseract
 foundry-local-sdk
 openai
 python-multipart
+python-dotenv
+requests
+Pillow

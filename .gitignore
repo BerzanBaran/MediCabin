@@ -4,6 +4,9 @@ __pycache__/
 .venv/
 venv/
 
+# Secrets — never commit API keys
+.env
+
 # Generated index (regenerate with `python -m src.ingest`)
 data/index.json
 

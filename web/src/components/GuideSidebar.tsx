@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   IconBook,
   IconCalendar,
+  IconCamera,
   IconChart,
   IconGrid,
   IconHelp,
@@ -29,6 +30,7 @@ export default function GuideSidebar({ active, onSelect }: GuideSidebarProps) {
     { id: "guide", icon: <IconBook size={18} />, label: t.guide_nav_guide },
     { id: "my-meds", icon: <IconLink size={18} />, label: t.guide_nav_my_meds },
     { id: "qa", icon: <IconHelp size={18} />, label: t.guide_nav_qa },
+    { id: "photo", icon: <IconCamera size={18} />, label: t.guide_nav_photo },
   ];
 
   const trackItems: { id: GuideView; icon: ReactNode; label: string }[] = [

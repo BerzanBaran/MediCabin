@@ -1,6 +1,10 @@
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT_DIR / ".env")
 DATA_DIR = ROOT_DIR / "data"
 PDFS_DIR = DATA_DIR / "pdfs"
 INDEX_PATH = DATA_DIR / "index.json"
@@ -33,3 +37,8 @@ SIDE_EFFECTS_SECTION_KEYWORDS = ["yan etki"]
 
 SYMPTOM_MATCH_THRESHOLD = 0.35
 SYMPTOM_MATCH_TOP_K = 5
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = "gemini-3.6-flash"
+GEMINI_MAX_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MB
+GEMINI_ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}

@@ -11,6 +11,7 @@ import ChatScreen from "./ChatScreen";
 import SecurityBanner from "../components/SecurityBanner";
 import SideEffectLogView from "./SideEffectLogView";
 import NotesView from "./NotesView";
+import PhotoAnalyzeView from "./PhotoAnalyzeView";
 import ProfileView from "./ProfileView";
 import SymptomCheckView from "./SymptomCheckView";
 
@@ -20,6 +21,7 @@ export type GuideView =
   | "guide"
   | "my-meds"
   | "qa"
+  | "photo"
   | "notes"
   | "analysis"
   | "symptom"
@@ -210,6 +212,8 @@ export default function GuideScreen({ initialView }: GuideScreenProps) {
         )}
 
         {view === "profile" && <ProfileView />}
+
+        {view === "photo" && <PhotoAnalyzeView />}
 
         {view === "notes" && <NotesView />}
 
