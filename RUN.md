@@ -1,4 +1,4 @@
-# İlaç Dolabı Asistanı — Çalıştırma Rehberi
+# MediCabin — Çalıştırma Rehberi
 
 ## Gereksinimler (bir kere kurulur)
 

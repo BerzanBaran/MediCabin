@@ -6,7 +6,7 @@ const KEY = "ilac-dolabi-language";
 
 const dictionaries = {
   tr: {
-    appName: "İlaç Dolabı Asistanı",
+    appName: "MediCabin",
     tab_home: "Ana Sayfa",
     tab_chat: "Sohbet",
     tab_meds: "İlaç Dolabım",
@@ -233,7 +233,7 @@ const dictionaries = {
     login_local_note: "Bu bilgiler yalnızca cihazınızda saklanır, hiçbir sunucuya gönderilmez.",
   },
   en: {
-    appName: "Medicine Cabinet Assistant",
+    appName: "MediCabin",
     tab_home: "Home",
     tab_chat: "Chat",
     tab_meds: "My Cabinet",
