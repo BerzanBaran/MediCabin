@@ -7,6 +7,7 @@ import { getMeds, getSafetyScan, type Med, type SafetyScan } from "../lib/api";
 import { useLanguage } from "../lib/i18n";
 import { getSchedule, groupByTime, setDrugTimes, type ScheduleMap } from "../lib/schedule";
 import AnalysisView from "./AnalysisView";
+import CalendarView from "./CalendarView";
 import ChatScreen from "./ChatScreen";
 import SecurityBanner from "../components/SecurityBanner";
 import SideEffectLogView from "./SideEffectLogView";
@@ -30,7 +31,7 @@ export type GuideView =
   | "interactions"
   | "polypharmacy";
 
-const SOON_VIEWS: GuideView[] = ["calendar"];
+const SOON_VIEWS: GuideView[] = [];
 
 function ComingSoon() {
   const { t } = useLanguage();
@@ -214,6 +215,8 @@ export default function GuideScreen({ initialView }: GuideScreenProps) {
         {view === "profile" && <ProfileView />}
 
         {view === "photo" && <PhotoAnalyzeView />}
+
+        {view === "calendar" && <CalendarView />}
 
         {view === "notes" && <NotesView />}
 

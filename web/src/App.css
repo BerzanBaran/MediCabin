@@ -1399,3 +1399,51 @@
   line-height: 1.5;
   margin: 0;
 }
+
+/* Calendar & reminders */
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.calendar-nav__date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.calendar-nav__today-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-light);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+.calendar-entry__check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.calendar-entry__check--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.calendar-entry__check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}

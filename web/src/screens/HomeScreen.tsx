@@ -96,7 +96,12 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
           description={t.card_photo_desc}
           onClick={() => onNavigate("guide", "photo")}
         />
-        <FeatureCard icon={<IconCalendar />} title={t.card_calendar_title} description={t.card_calendar_desc} comingSoon />
+        <FeatureCard
+          icon={<IconCalendar />}
+          title={t.card_calendar_title}
+          description={t.card_calendar_desc}
+          onClick={() => onNavigate("guide", "calendar")}
+        />
       </section>
     </div>
   );
