@@ -6,6 +6,9 @@ export interface UsageEntry {
   date: string; // YYYY-MM-DD
   drugName: string;
   status: UsageStatus;
+  time?: string; // HH:MM — distinguishes multiple doses of the same drug on
+  // the same day (e.g. Calendar's per-dose-time tracking). Omitted for the
+  // single daily status set from Notes & Comments' "Today's Usage Status".
 }
 
 export function getUsageLog(): UsageEntry[] {
@@ -21,14 +24,23 @@ export function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function setUsageStatus(date: string, drugName: string, status: UsageStatus): void {
-  const log = getUsageLog().filter((e) => !(e.date === date && e.drugName === drugName));
-  log.push({ date, drugName, status });
+function matches(e: UsageEntry, date: string, drugName: string, time?: string): boolean {
+  return e.date === date && e.drugName === drugName && (e.time ?? undefined) === (time ?? undefined);
+}
+
+export function setUsageStatus(date: string, drugName: string, status: UsageStatus, time?: string): void {
+  const log = getUsageLog().filter((e) => !matches(e, date, drugName, time));
+  log.push(time ? { date, drugName, status, time } : { date, drugName, status });
   localStorage.setItem(KEY, JSON.stringify(log));
 }
 
-export function getStatusFor(log: UsageEntry[], date: string, drugName: string): UsageStatus | null {
-  return log.find((e) => e.date === date && e.drugName === drugName)?.status ?? null;
+export function getStatusFor(log: UsageEntry[], date: string, drugName: string, time?: string): UsageStatus | null {
+  return log.find((e) => matches(e, date, drugName, time))?.status ?? null;
+}
+
+export function clearUsageStatus(date: string, drugName: string, time?: string): void {
+  const log = getUsageLog().filter((e) => !matches(e, date, drugName, time));
+  localStorage.setItem(KEY, JSON.stringify(log));
 }
 
 export interface DayCounts {
