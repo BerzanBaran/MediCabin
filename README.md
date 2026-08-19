@@ -4,7 +4,8 @@
 
 Prospektüslerinizi okur, sorularınızı kaynak göstererek yanıtlar, ilaç etkileşimlerini kontrol eder — ve bunların hiçbiri için internete çıkmaz. Yapay zeka modelleri [Foundry Local](https://learn.microsoft.com/azure/ai-foundry/foundry-local/) ile doğrudan kendi bilgisayarınızda çalışır.
 
-<!-- Buraya ana sayfa ekran görüntüsünü ekleyin -->
+<img width="1296" height="907" alt="image" src="https://github.com/user-attachments/assets/1f76b7fb-95df-424b-a8d7-e8a3dc547089" />
+
 ![Ana Sayfa](docs/screenshots/ana-sayfa.png)
 
 ---
