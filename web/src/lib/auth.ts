@@ -6,19 +6,18 @@ interface StoredAccount {
   passwordHash: string;
 }
 
-/** Turkish national ID (TC Kimlik No) checksum algorithm — 11 digits, first
- * digit non-zero, with two check digits derived from the first nine. */
+/** Basic TC Kimlik No format check — 11 digits, doesn't start with 0, not
+ * all-identical digits. This is a fully local demo account system (nothing
+ * is verified against a real government database), so we deliberately don't
+ * enforce the real official checksum: that algorithm only accepts a tiny
+ * fraction of arbitrary 11-digit numbers, which made it impossible to
+ * register with anything other than someone's actual real ID — far too
+ * strict for a local test/demo account. */
 export function isValidTcNo(tcNo: string): boolean {
   if (!/^\d{11}$/.test(tcNo)) return false;
-  const d = tcNo.split("").map(Number);
-  if (d[0] === 0) return false;
-
-  const oddSum = d[0] + d[2] + d[4] + d[6] + d[8];
-  const evenSum = d[1] + d[3] + d[5] + d[7];
-  const d10 = (oddSum * 7 - evenSum) % 10;
-  const d11 = (oddSum + evenSum + d10) % 10;
-
-  return d10 === d[9] && d11 === d[10];
+  if (tcNo[0] === "0") return false;
+  if (/^(\d)\1{10}$/.test(tcNo)) return false;
+  return true;
 }
 
 async function hashPassword(password: string): Promise<string> {

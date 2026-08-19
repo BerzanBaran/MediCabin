@@ -1,13 +1,15 @@
 .app {
-  max-width: 860px;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .app--wide {
-  max-width: 1180px;
+  max-width: 1800px;
 }
 
 .app__header {
