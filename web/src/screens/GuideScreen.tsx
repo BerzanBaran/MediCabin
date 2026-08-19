@@ -39,9 +39,13 @@ function ComingSoon() {
   );
 }
 
-export default function GuideScreen() {
+interface GuideScreenProps {
+  initialView?: GuideView;
+}
+
+export default function GuideScreen({ initialView }: GuideScreenProps) {
   const { t } = useLanguage();
-  const [view, setView] = useState<GuideView>("panel");
+  const [view, setView] = useState<GuideView>(initialView ?? "panel");
   const [meds, setMeds] = useState<Med[]>([]);
   const [scan, setScan] = useState<SafetyScan | null>(null);
   const [schedule, setSchedule] = useState<ScheduleMap>(getSchedule());

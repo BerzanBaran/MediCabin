@@ -11,9 +11,10 @@ import {
   IconUser,
 } from "../components/icons";
 import { useLanguage } from "../lib/i18n";
+import type { GuideView } from "./GuideScreen";
 
 interface HomeScreenProps {
-  onNavigate: (tab: "chat" | "meds" | "guide") => void;
+  onNavigate: (tab: "chat" | "meds" | "guide", guideView?: GuideView) => void;
 }
 
 export default function HomeScreen({ onNavigate }: HomeScreenProps) {
@@ -47,7 +48,12 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
       </section>
 
       <section className="home-grid">
-        <FeatureCard icon={<IconUser />} title={t.card_profile_title} description={t.card_profile_desc} comingSoon />
+        <FeatureCard
+          icon={<IconUser />}
+          title={t.card_profile_title}
+          description={t.card_profile_desc}
+          onClick={() => onNavigate("guide", "profile")}
+        />
         <FeatureCard
           icon={<IconBook />}
           title={t.card_guide_title}
@@ -60,10 +66,30 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
           description={t.card_qa_desc}
           onClick={() => onNavigate("chat")}
         />
-        <FeatureCard icon={<IconNote />} title={t.card_notes_title} description={t.card_notes_desc} comingSoon />
-        <FeatureCard icon={<IconChart />} title={t.card_analysis_title} description={t.card_analysis_desc} comingSoon />
-        <FeatureCard icon={<IconPulse />} title={t.card_symptom_title} description={t.card_symptom_desc} comingSoon />
-        <FeatureCard icon={<IconShield />} title={t.card_safety_title} description={t.card_safety_desc} comingSoon />
+        <FeatureCard
+          icon={<IconNote />}
+          title={t.card_notes_title}
+          description={t.card_notes_desc}
+          onClick={() => onNavigate("guide", "notes")}
+        />
+        <FeatureCard
+          icon={<IconChart />}
+          title={t.card_analysis_title}
+          description={t.card_analysis_desc}
+          onClick={() => onNavigate("guide", "analysis")}
+        />
+        <FeatureCard
+          icon={<IconPulse />}
+          title={t.card_symptom_title}
+          description={t.card_symptom_desc}
+          onClick={() => onNavigate("guide", "symptom")}
+        />
+        <FeatureCard
+          icon={<IconShield />}
+          title={t.card_safety_title}
+          description={t.card_safety_desc}
+          onClick={() => onNavigate("guide", "interactions")}
+        />
         <FeatureCard icon={<IconCamera />} title={t.card_photo_title} description={t.card_photo_desc} comingSoon />
         <FeatureCard icon={<IconCalendar />} title={t.card_calendar_title} description={t.card_calendar_desc} comingSoon />
       </section>

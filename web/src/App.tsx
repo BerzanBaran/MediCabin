@@ -3,7 +3,7 @@ import "./App.css";
 import LanguageToggle from "./components/LanguageToggle";
 import { LanguageProvider, useLanguage } from "./lib/i18n";
 import ChatScreen from "./screens/ChatScreen";
-import GuideScreen from "./screens/GuideScreen";
+import GuideScreen, { type GuideView } from "./screens/GuideScreen";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import MedsScreen from "./screens/MedsScreen";
@@ -13,6 +13,7 @@ type Tab = "home" | "chat" | "meds" | "settings" | "guide" | "login";
 
 function AppShell() {
   const [tab, setTab] = useState<Tab>("home");
+  const [guideInitialView, setGuideInitialView] = useState<GuideView>("panel");
   const { t } = useLanguage();
 
   const TABS: { id: Tab; label: string }[] = [
@@ -24,6 +25,11 @@ function AppShell() {
   ];
 
   const fullBleed = tab === "home" || tab === "guide";
+
+  function handleHomeNavigate(target: "chat" | "meds" | "guide", guideView?: GuideView) {
+    if (target === "guide") setGuideInitialView(guideView ?? "panel");
+    setTab(target);
+  }
 
   return (
     <div className={`app ${tab === "guide" ? "app--wide" : ""}`}>
@@ -48,11 +54,11 @@ function AppShell() {
       </header>
 
       <main className={`app__content ${fullBleed ? "app__content--home" : ""}`}>
-        {tab === "home" && <HomeScreen onNavigate={setTab} />}
+        {tab === "home" && <HomeScreen onNavigate={handleHomeNavigate} />}
         {tab === "chat" && <ChatScreen />}
         {tab === "meds" && <MedsScreen />}
         {tab === "settings" && <SettingsScreen />}
-        {tab === "guide" && <GuideScreen />}
+        {tab === "guide" && <GuideScreen initialView={guideInitialView} />}
         {tab === "login" && <LoginScreen onLoggedIn={() => setTab("home")} />}
       </main>
     </div>
